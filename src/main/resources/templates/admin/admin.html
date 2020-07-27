@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru">
+<html charset="UTF-8">
+
+
+
+<html>
+<head>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+</head>
+<body>
+
+<!--- Черная полоска сверху--->
+<nav class="navbar navbar-expand-md navbar-dark"
+     style="background-color:#0d0d25">
+    <div style="color: aliceblue">
+        <span>  [[${loggedInUser.name}]] </span>
+    </div>
+    <p>_</p>
+    <div style="color: aliceblue"> with roles: <span>[[${loggedInUser.getRolesString()}]]</span>
+    </div>
+    <div class="navbar-nav position-absolute" style="right: 0">
+        <li><a href="/logout"
+               class="nav-link nav-right">Logout</a></li>
+    </div>
+</nav>
+<br>
+
+<!---- Сайдбар ADMIN - USER--->
+<main class="flex-grow-1 flex-shrink-1 d-flex">
+    <div class="container-fluid px-0">
+        <div class="row justify-content-center no-gutters vh-100">
+            <div class="col-md-2" style="background-color: #f5f5f5">
+                <a href="/admin" class="list-group-item list-group-item-action active rounded-0 border border-info">Admin</a>
+                <a href="/user"
+                   class="list-group-item list-group-item-action justify-content-between rounded-0 border border-0 "
+                   style="background-color: #f5f5f5; color: blue">User</a>
+            </div>
+            <div class="col-md-10 p-4" style="background-color: #efefef">
+
+                <!--- Заголовок админ панели--->
+                <h1>
+                    Admin panel
+                </h1>
+
+                <!--- Собственно сама админ-панель --->
+                <ul class="nav nav-tabs">
+
+                    <!--- Вкладка Users Table --->
+                    <li class="nav-item">
+                        <a class="nav-link active" style="border: 1px solid lightgrey" href="#userTable"
+                           data-toggle="tab">Users table</a>
+                    </li>
+
+                    <!--- Вкаладка New User -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#addUser" data-toggle="tab">New user</a>
+                    </li>
+                </ul>
+
+                <!--- Код таблицы юзеров, связанный со вкладкой User Table --->
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="userTable">
+                        <div class="d-flex flex-column" style="border: 1px solid lightgrey">
+                            <div class="p-2" style="font-size:large;color: black; font-weight: 600;
+                    background-color:#F5F5F5; height: 53px">All users
+                            </div>
+                        </div>
+                        <div class="parent" style="border: 1px solid lightgrey">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Password</th>
+                                    <th>Role</th>
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="user : ${listUsers}">
+                                    <td th:text="${user.id}"></td>
+                                    <td th:text="${user.username}"></td>
+                                    <td th:text="${user.password}"></td>
+                                    <td th:text="${user.getRolesString()}"></td>
+
+                                    <!--- Столбцы с кнопками изменить-удалить--->
+                                    <td>
+                                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
+                                                data-target="#editUser" th:attrappend="data-target=${user.id}">Edit</button>
+
+                                        <!--- Модальное окно EditUser --->
+                                        <div class="modal fade" id="editUser" th:attrappend="id=${user.id}" tabindex="-1" role="dialog">
+                                            <form th:action="@{/admin/update}" method="POST">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editModalLabel">Edit user</h5>
+                                                            <button type="button" class="close" data-dismiss="modal">
+                                                                &times;
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body modal-form">
+                                                            <div class="form-group add-form">
+                                                                <label class="col-md-8 control-label add-form" for="id">ID</label>
+                                                                <div class="col-md-13">
+                                                                    <input id="id" name="id"
+                                                                           type="text" placeholder="id"
+                                                                           class="form-control"  th:value="${user.id}"
+                                                                           readonly />
+                                                                </div>
+                                                            </div>
+                                                            <label class="col-md-8 control-label add-form" for="username">User Name</label>
+                                                            <input id="username"
+                                                                   name="username"
+                                                                   type="text" placeholder="username"
+                                                                   class="form-control"
+                                                                   th:value="${user.name}"/>
+                                                            <div class="form-group add-form">
+
+                                                            </div>
+                                                            <div class="form-group add-form">
+                                                                <label class="col-md-8 control-label" for="password">Password
+                                                                </label>
+                                                                <div class="col-md-13 add-form">
+                                                                    <input id="password" path="password" name="password"
+                                                                           type="text" placeholder="password"
+                                                                           class="form-control"
+                                                                           th:value="${user.password}"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group add-form">
+                                                                <label for="roles" class="add-form">Role</label>
+                                                                <select multiple class="form-control" style="height: 60px" id="roles" name="roles">
+                                                                    <option value="ROLE_ADMIN">ROLE_ADMIN</option>
+                                                                    <option selected="selected" value="ROLE_USER">ROLE_USER</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-sm btn-primary">Edit</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </td>
+
+                                    <!--- Кнопка удаления --->
+                                    <td>
+                                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                                data-target="#delModal" th:attrappend="data-target=${user.id}">Delete</button>
+
+                                        <!--- Модальное окно подтверждения удаления -->
+                                        <div class="modal fade" id="delModal" th:attrappend="id=${user.id}" tabindex="-1"
+                                             role="dialog" aria-labelledby="removeModalCenterTitle" aria-hidden="true">
+                                            <form th:action="@{/admin/remove}" method="post">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="removeModalCenterTitle">Alert message</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="alert alert-danger">
+                                                                Are You sure You want to delete this User?
+                                                            </p>
+                                                            <input path="id" name="id"
+                                                                   type="hidden" placeholder="id"
+                                                                   class="form-control"
+                                                                   th:value="${user.id}" readonly/>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div> <!--- Конец окна удаления -->
+
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!--- Код вкладки Add New User -->
+                    <div class="tab-pane fade" id="addUser">
+                        <div class="d-flex flex-column" style="border: 1px solid lightgrey">
+                            <div class="p-2" style="font-size:large;color: black; font-weight: 600;
+                    background-color:#F5F5F5; height: 53px">Add new user
+                            </div>
+                        </div>
+                        <div class="parent" style="border: 1px solid lightgrey">
+                            <center>
+                                <form th:action="@{/admin/add}" method="POST"
+                                      class="add-form form-center">
+                                    <label for="username1" class="add-form">Username</label>
+                                    <input type="text" class="form-control" name="username" id="username1"
+                                           required="required" placeholder="Username">
+
+                                    <label for="password1">Password</label>
+                                    <input type="text" class="form-control" id="password1" name="password"
+                                           required="required" placeholder="Password">
+                                    <div class="form-group">
+                                        <label for="userRole" class="add-form">Role</label>
+                                        <select multiple class="form-control" style="height: 60px" id="userRole"
+                                                name="roles">
+                                            <option name="ROLE_USER" value="ROLE_USER">USER</option>
+                                            <option name="ROLE_ADMIN" value="ROLE_ADMIN">ADMIN</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Add new user</button>
+                                </form>
+                            </center>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
