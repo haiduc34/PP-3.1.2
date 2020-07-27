@@ -1,13 +1,16 @@
 package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import web.model.Role;
 import web.model.User;
+import web.service.RoleService;
 import web.service.UserService;
 
 import java.util.*;
@@ -18,6 +21,9 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
+
+	@Autowired
+	RoleService roleService;
 
 	@GetMapping(value = "/")
 	public String printWelcome(ModelMap model) {
@@ -46,7 +52,7 @@ public class UserController {
 	@PostMapping(value = "/admin/add")
 	public String addUser(@RequestParam("username") String name, @RequestParam("password") String password, @RequestParam("roles") String roles){
 		Set<Role> roleSet = new HashSet<>();
-		roleSet.add(userService.getRoleByName(roles));
+		roleSet.add(roleService.getRoleByName(roles));
 		userService.addUser(new User(name, roleSet, password));
 		return "redirect:/admin";
 	}
@@ -63,7 +69,7 @@ public class UserController {
 	public String userData(Model model, @RequestParam("id") Long id, @RequestParam("username")
 			String name, @RequestParam("password") String password, @RequestParam("roles") String role){
 		HashSet<Role> roles = new HashSet<>();
-		roles.add(userService.getRoleByName(role));
+		roles.add(roleService.getRoleByName(role));
 		userService.updateUser(new User(id, name, roles, password));
 		return "redirect:/admin";
 	}

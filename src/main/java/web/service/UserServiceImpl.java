@@ -24,12 +24,6 @@ public class UserServiceImpl implements UserService {
     // «Пользователь» – это просто Object. В большинстве случаев он может быть
     //  приведен к классу UserDetails.
     // Для создания UserDetails используется интерфейс UserDetailsService, с единственным методом:
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userDao.getUserByName(s);
-        return userDao.getUserByName(s);
-    }
 
     @Transactional
     public User getUserById(Long id) {
@@ -55,19 +49,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public List<User> listUsers() {
         return userDao.listUsers();
-    }
-
-    @Transactional
-    public Role getRoleById(Long id) {
-        return userDao.getRoleById(id);
-    }
-
-    @Transactional
-    public Role getRoleByName(String name) {
-        if (userDao.getRoleByName(name) == null)
-            userDao.addRole(new Role(name));
-
-        return userDao.getRoleByName(name);
     }
 
 }

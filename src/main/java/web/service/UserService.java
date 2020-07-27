@@ -8,11 +8,9 @@ import web.model.User;
 
 import java.util.List;
 
-public interface UserService extends UserDetailsService {
+public interface UserService {
 
     User getUserById(Long id);
-
-    UserDetails loadUserByUsername(String s) throws UsernameNotFoundException;
 
     void addUser(User user);
 
@@ -21,7 +19,5 @@ public interface UserService extends UserDetailsService {
     void removeUser(Long id);
 
     List<User> listUsers();
-
-    Role getRoleByName(String name);
 
 }
