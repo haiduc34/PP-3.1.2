@@ -13,18 +13,9 @@ public class RoleDaoImpl implements RoleDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-
-
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-
-
     public Role getRoleByName(String name) {
 
-        EntityManager em = getEntityManager();
-        Query query = em.createQuery("from Role where role = :role")
+        Query query = entityManager.createQuery("from Role where role = :role")
                 .setParameter("role", name)
                 .setMaxResults(1);
 
@@ -36,15 +27,13 @@ public class RoleDaoImpl implements RoleDao {
 
     @Override
     public Role getRoleById(Long id) {
-        EntityManager em = getEntityManager();
-        Query query = em.createQuery("from Role where id = :id");
+        Query query = entityManager.createQuery("from Role where id = :id");
         Role role = (Role) query.getSingleResult();
         return role;
     }
 
     @Override
     public void addRole(Role role) {
-        EntityManager em = getEntityManager();
-        em.persist(role);
+        entityManager.persist(role);
     }
 }

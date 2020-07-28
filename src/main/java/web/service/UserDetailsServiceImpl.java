@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.dao.UserDao;
-import web.model.User;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -21,7 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userDao.getUserByName(s);
         return userDao.getUserByName(s);
     }
 }

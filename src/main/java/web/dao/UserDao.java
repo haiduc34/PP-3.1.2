@@ -22,10 +22,5 @@ public interface UserDao  {
 
     public List<User> listUsers();
 
-    Role getRoleByName(String name);
-
-    void addRole(Role role);
-
-    Role getRoleById(Long id);
 }
 
